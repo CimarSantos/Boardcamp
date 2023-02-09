@@ -9,7 +9,6 @@ async function insertGames(req, res) {
       SELECT $1, $2, $3, $4 WHERE NOT EXISTS (SELECT * FROM games WHERE name = $5);`,
       [name, image, stockTotal, pricePerDay, name]
     );
-    console.log(rowCount);
     if (rowCount === 1) return res.status(201).send("Jogo criado com sucesso!");
     else
       return res.status(409).send("Este jogo já está cadastrado, tente outro.");
