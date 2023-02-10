@@ -7,4 +7,18 @@ const gameSchema = Joi.object().keys({
   pricePerDay: Joi.number().min(1).required(),
 });
 
-export { gameSchema };
+const customerSchema = Joi.object().keys({
+  name: Joi.string().min(3).required(),
+  cpf: Joi.string()
+    .length(11)
+    .regex(/^[0-9]+$/)
+    .required(),
+  phone: Joi.string()
+    .min(10)
+    .max(11)
+    .regex(/^[0-9]+$/)
+    .required(),
+  birthday: Joi.date().required(),
+});
+
+export { gameSchema, customerSchema };

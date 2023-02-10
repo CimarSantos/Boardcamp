@@ -4,12 +4,12 @@ import {
   getCustomers,
   getCustomersById,
 } from "../controllers/customerController.js";
-/* import { validateNewGames } from "../middlewares/games.middleware.js"; */
+import { validateNewCustomer } from "../middlewares/customers.middleware.js";
 
 const customersRouter = Router();
 
 customersRouter.get("/customers", getCustomers);
 customersRouter.get("/customers/:id", getCustomersById);
-customersRouter.post("/customers", insertCustomer);
+customersRouter.post("/customers", validateNewCustomer, insertCustomer);
 
 export default customersRouter;
