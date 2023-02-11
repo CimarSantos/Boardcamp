@@ -99,6 +99,16 @@ async function updateCustomers(req, res) {
   const createData = formatDate(data);
 
   try {
+      const ifCpfExists = await db.query(
+        `SELECT * FROM customers WHERE cpf = $1`,
+        [cpf]
+      );
+      if (ifCpfExists.rowCount > 0 && ifCpfExists.rows[0].id !== parseInt(id)) {
+        return res
+          .status(409)
+          .send("Este CPF já existe. Verifique e tente novamente.");
+      }
+      
     const result = await db.query(
       "UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5",
       [name, phone, cpf, birthday, id]
