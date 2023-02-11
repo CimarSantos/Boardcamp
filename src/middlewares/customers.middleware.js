@@ -1,6 +1,6 @@
 import { customerSchema } from "../schemas/Schemas.js";
 
-function validateNewCustomer(req, res, next) {
+function validateCustomer(req, res, next) {
   const { name, phone, cpf, birthday } = req.body;
   const { error } = customerSchema.validate(
     { name, phone, cpf, birthday },
@@ -19,4 +19,4 @@ function validateNewCustomer(req, res, next) {
   next();
 }
 
-export { validateNewCustomer };
+export { validateCustomer };

@@ -80,4 +80,42 @@ async function getCustomersById(req, res) {
   }
 }
 
-export { insertCustomer, getCustomers, getCustomersById };
+async function updateCustomers(req, res) {
+  const { id } = req.params;
+  const { name, phone, cpf, birthday } = req.body;
+  const data = new Date();
+
+  const zeroFill = (n) => {
+    return n < 9 ? `0${n}` : `${n}`;
+  };
+  const formatDate = (date) => {
+    const d = zeroFill(date.getDate());
+    const mo = zeroFill(date.getMonth() + 1);
+    const y = zeroFill(date.getFullYear());
+
+    return `${y}-${mo}-${d}`;
+  };
+
+  const createData = formatDate(data);
+
+  try {
+    const result = await db.query(
+      "UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5",
+      [name, phone, cpf, birthday, id]
+    );
+
+    const formmattedCustomers = result.rows.map((customer) => {
+      const birthday = formatDate(new Date(customer.birthday));
+      return { ...customer, birthday: birthday };
+    });
+
+    if (result.rowCount === 0)
+      return res.status(404).send("Este usuário não existe.");
+
+    res.send(formmattedCustomers);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+}
+
+export { insertCustomer, getCustomers, getCustomersById, updateCustomers };
