@@ -88,9 +88,21 @@ async function getRental(req, res) {
 
 async function updateRental(req, res) {}
 async function deleteRental(req, res) {
-  const { id } = res.locals.rental;
+  const { id } = req.params;
 
   try {
+    const ifRentalExists = await db.query(
+      `SELECT * FROM rentals WHERE id = $1`,
+      [id]
+    );
+
+    if (!ifRentalExists.rows.length)
+      return res.status(404).send("Este aluguel não existe.");
+
+    if (!ifRentalExists.rows[0].returnDate) {
+      return res.status(400).send("Este aluguel ainda não foi finalizado");
+    }
+
     const deleteRental = await db.query("DELETE FROM rentals WHERE id = $1", [
       id,
     ]);
