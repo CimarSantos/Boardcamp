@@ -24,7 +24,7 @@ const customerSchema = Joi.object().keys({
 const rentalSchema = Joi.object().keys({
   customerId: Joi.number().required(),
   gameId: Joi.number().required(),
-  daysRented: Joi.number().required(),
+  daysRented: Joi.number().positive().not(0).required(),
 });
 
 export { gameSchema, customerSchema, rentalSchema };

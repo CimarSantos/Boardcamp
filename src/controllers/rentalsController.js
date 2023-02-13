@@ -1,7 +1,7 @@
 import { db } from "../database/database.connection.js";
 
 async function insertRental(req, res) {
-  const { customerId, gameId, daysRented } = res.locals.rental;
+  const { customerId, gameId, daysRented } = req.body;
 
   const data = new Date();
 
