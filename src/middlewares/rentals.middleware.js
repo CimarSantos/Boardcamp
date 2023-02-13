@@ -10,6 +10,11 @@ async function validateRental(req, res, next) {
     }
   );
 
+  if (error) {
+    const message = error.details.map((d) => d.message);
+    return res.status(400).send(message);
+  }
+
   const checkCustomerExists = await db.query(
     "SELECT * FROM customers WHERE id = $1",
     [customerId]
@@ -42,11 +47,6 @@ async function validateRental(req, res, next) {
     return res
       .status(400)
       .send("No momento não existe este jogo disponível para aluguel.");
-  }
-
-  if (error) {
-    const message = error.details.map((d) => d.message);
-    return res.status(400).send(message);
   }
 
   res.locals.rental = { customerId, gameId, daysRented };
