@@ -5,13 +5,20 @@ import {
   updateRental,
   deleteRental,
 } from "../controllers/rentalsController.js";
-import { validateRental } from "../middlewares/rentals.middleware.js";
+import {
+  validateRental,
+  ifExistRentalValidation,
+} from "../middlewares/rentals.middleware.js";
 
 const rentalsRouter = Router();
 
 rentalsRouter.post("/rentals", validateRental, insertRental);
 rentalsRouter.get("/rentals", getRental);
-rentalsRouter.post("/rentals/:id/return", updateRental);
+rentalsRouter.post(
+  "/rentals/:id/return",
+  ifExistRentalValidation,
+  updateRental
+);
 rentalsRouter.delete("/rentals/:id", deleteRental);
 
 export default rentalsRouter;

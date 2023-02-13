@@ -54,7 +54,7 @@ async function validateRental(req, res, next) {
   next();
 }
 
-/* async function deleteRentalValidation(req, res, next) {
+async function ifExistRentalValidation(req, res, next) {
   const { id } = req.params;
 
   const ifRentalExists = await db.query(`SELECT * FROM rentals WHERE id = $1`, [
@@ -67,9 +67,9 @@ async function validateRental(req, res, next) {
   if (!ifRentalExists.rows[0].returnDate) {
     return res.status(400).send("Este aluguel ainda não foi finalizado");
   }
- *
+
   res.locals.rental = { id };
   next();
-} */
+}
 
-export { validateRental };
+export { validateRental, ifExistRentalValidation };
