@@ -1,7 +1,7 @@
 import { db } from "../database/database.connection.js";
 
 async function insertRental(req, res) {
-  const { customerId, gameId, daysRented } = req.body;
+  const { customerId, gameId, daysRented } = res.locals.rental;
 
   const data = new Date();
 
@@ -19,38 +19,6 @@ async function insertRental(req, res) {
   const rentDate = formatDate(data);
 
   try {
-    const checkCustomerExists = await db.query(
-      "SELECT * FROM customers WHERE id = $1",
-      [customerId]
-    );
-    if (checkCustomerExists.rows.length === 0) {
-      return res.status(400).send("Este cliente não existe");
-    }
-    const checkGameExists = await db.query(
-      "SELECT * FROM games WHERE id = $1",
-      [gameId]
-    );
-    if (checkGameExists.rows.length === 0) {
-      return res.status(400).send("Este jogo não existe");
-    }
-
-    const checkGameAvailability = await db.query(
-      `SELECT count(*) FROM rentals WHERE "gameId" = $1 AND "returnDate" IS NULL`,
-      [gameId]
-    );
-
-    const rentedGames = checkGameAvailability.rows[0].count;
-    const checkStock = await db.query(
-      `SELECT "stockTotal" FROM games WHERE id = $1`,
-      [gameId]
-    );
-    const gameStock = checkStock.rows[0].stock;
-    if (rentedGames >= gameStock) {
-      return res
-        .status(400)
-        .send("No momento não existe este jogo disponível para aluguel.");
-    }
-
     const getGamePrice = await db.query(
       `SELECT "pricePerDay" FROM games WHERE id = $1`,
       [gameId]
@@ -70,7 +38,7 @@ async function insertRental(req, res) {
 }
 
 async function getRental(req, res) {
-  /* try {
+  try {
     const result = await db.query(
       `SELECT 
         rentals.id, 
@@ -93,7 +61,7 @@ async function getRental(req, res) {
     res.status(200).send(result.rows);
   } catch (error) {
     res.status(500).send(error.message);
-  } */
+  }
 }
 async function updateRental(req, res) {}
 async function deleteRental(req, res) {}
