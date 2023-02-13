@@ -16,7 +16,7 @@ async function insertCustomer(req, res) {
   }
 }
 
-async function getCustomers(_, res) {
+async function getCustomers(req, res) {
   const data = new Date();
 
   const zeroFill = (n) => {
@@ -34,11 +34,10 @@ async function getCustomers(_, res) {
 
   try {
     const customers = await db.query("SELECT * FROM customers");
-      const formmattedCustomers = customers.rows.map((customer) => {
-        if (typeof customer !== "object") return customer;
-        const birthday = formatDate(new Date(customer.birthday));
-        return { ...customer, birthday: birthday };
-      });
+    const formmattedCustomers = customers.rows.map((customer) => {
+      const birthday = formatDate(new Date(customer.birthday));
+      return { ...customer, birthday: birthday };
+    });
 
     res.send(formmattedCustomers);
   } catch (err) {
@@ -47,13 +46,8 @@ async function getCustomers(_, res) {
 }
 
 async function getCustomersById(req, res) {
-    
   const { id } = req.params;
   const data = new Date();
-
-  if (!req.params || typeof req.params !== "object") {
-    return res.status(400).send("Requisição inválida");
-  }
 
   const zeroFill = (n) => {
     return n < 9 ? `0${n}` : `${n}`;
@@ -72,13 +66,13 @@ async function getCustomersById(req, res) {
     const customers = await db.query("SELECT * FROM customers WHERE id = $1", [
       id,
     ]);
+    if (!customers.rows.length)
+      return res.status(404).send("Este usuário não existe.");
+
     const formmattedCustomers = customers.rows.map((customer) => {
       const birthday = formatDate(new Date(customer.birthday));
       return { ...customer, birthday: birthday };
     });
-
-    if (!customers.rows.length)
-      return res.status(404).send("Este usuário não existe.");
 
     res.send(formmattedCustomers);
   } catch (err) {
