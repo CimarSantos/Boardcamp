@@ -95,13 +95,6 @@ async function updateRental(req, res) {
       rental.rows[0].gameId,
     ]);
 
-    if (!rental.rows.length)
-      return res.status(404).send("Este aluguel não existe.");
-
-    if (!rental.rows[0].returnDate) {
-      return res.status(400).send("Este aluguel ainda não foi finalizado");
-    }
-
     const returnDate = new Date();
     const daysForRental =
       (returnDate - rental.rows[0].rentDate) / (1000 * 60 * 60 * 24);
