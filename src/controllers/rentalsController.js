@@ -108,13 +108,11 @@ async function updateRental(req, res) {
     const daysForRental =
       (returnDate - rental.rows[0].rentDate) / (1000 * 60 * 60 * 24);
 
-      let delayFee = 0;
-      const daysRented = Math.round(rental.rows[0].daysRented);
-      const daysSinceRent = Math.round(daysForRental);
-      if (daysSinceRent > daysRented) {
-        delayFee =
-          (daysSinceRent - daysRented) * (game.rows[0].pricePerDay / 100);
-      }
+      let delayFee =
+        Math.round(delay) - rental.rows[0].daysRented <= 0
+          ? 0
+          : (Math.round(delay) - rental.rows[0].daysRented - 1) *
+            (price.rows[0].pricePerDay / 100);
 
     await db.query(
       'UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3;',
