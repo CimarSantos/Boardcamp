@@ -61,17 +61,12 @@ async function deleteRentalValidation(req, res, next) {
     id,
   ]);
 
-  const checkGameAvailability = await db.query(
-    `SELECT count(*) FROM rentals WHERE id = $1 AND "returnDate" IS NULL`,
-    [id]
-  );
-  console.log(checkGameAvailability);
   if (!ifRentalExists.rows.length)
     return res.status(404).send("Este aluguel não existe.");
 
-  /* if (ifRentalExists.returnDate === null) {
-    return res.status(400).send("Aluguel ainda não finalizado");
-  } */
+  if (!ifRentalExists.rows[0].returnDate) {
+    return res.status(400).send("Este aluguel ainda não foi finalizado");
+  }
 
   res.locals.rental = { id };
   next();
