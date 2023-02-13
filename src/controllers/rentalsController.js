@@ -39,30 +39,53 @@ async function insertRental(req, res) {
 
 async function getRental(req, res) {
   try {
-    const result = await db.query(
-      `SELECT 
-        rentals.id, 
-        rentals.customerId, 
-        rentals.gameId, 
-        rentals.rentDate, 
-        rentals.daysRented, 
-        rentals.returnDate, 
-        rentals.originalPrice, 
-        rentals.delayFee, 
-        customers.id AS customer_id, 
-        customers.name AS customer_name, 
-        games.id AS game_id, 
-        games.name AS game_name 
-      FROM 
-        rentals 
-        JOIN customers ON rentals.customerId = customers.id 
-        JOIN games ON rentals.gameId = games.id;`
-    );
-    res.status(200).send(result.rows);
+    const result = await db.query(`
+      SELECT 
+        rentals.id,
+        rentals."customerId",
+        rentals."gameId",
+        rentals."rentDate",
+        rentals."daysRented",
+        rentals."returnDate",
+        rentals."originalPrice",
+        rentals."delayFee",
+        customers.id AS "customer.id",
+        customers.name AS "customer.name",
+        games.id AS "game.id",
+        games.name AS "game.name"
+      FROM rentals
+      INNER JOIN customers ON rentals."customerId" = customers.id
+      INNER JOIN games ON rentals."gameId" = games.id
+    `);
+
+    const rentals = result.rows.map((r) => {
+      return {
+        id: r.id,
+        customerId: r.customerId,
+        gameId: r.gameId,
+        rentDate: r.rentDate,
+        daysRented: r.daysRented,
+        returnDate: r.returnDate,
+        originalPrice: r.originalPrice,
+        delayFee: r.delayFee,
+        customer: {
+          id: r["customer.id"],
+          name: r["customer.name"],
+        },
+        game: {
+          id: r["game.id"],
+          name: r["game.name"],
+        },
+      };
+    });
+
+    return res.send(rentals);
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    return res.status(500).send(error.message);
   }
 }
+
 async function updateRental(req, res) {}
 async function deleteRental(req, res) {}
 
