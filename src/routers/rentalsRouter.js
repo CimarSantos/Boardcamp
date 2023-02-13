@@ -14,11 +14,7 @@ const rentalsRouter = Router();
 
 rentalsRouter.post("/rentals", validateRental, insertRental);
 rentalsRouter.get("/rentals", getRental);
-rentalsRouter.post(
-  "/rentals/:id/return",
-  ifExistRentalValidation,
-  updateRental
-);
+rentalsRouter.post("/rentals/:id/return", updateRental);
 rentalsRouter.delete("/rentals/:id", deleteRental);
 
 export default rentalsRouter;

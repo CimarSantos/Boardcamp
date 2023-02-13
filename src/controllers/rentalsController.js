@@ -90,7 +90,16 @@ async function updateRental(req, res) {
   const id = req.params.id;
 
   try {
+    
     const rental = await db.query("SELECT * FROM rentals WHERE id = $1", [id]);
+    if (!rental.rows[0]) {
+      return res.status(404).send("Aluguel não encontrado");
+    }
+
+    if (rental.rows[0].returnDate) {
+      return res.status(400).send("Este aluguel já está finalizado");
+    }
+
     const game = await db.query("SELECT * FROM games WHERE id = $1", [
       rental.rows[0].gameId,
     ]);
@@ -117,6 +126,7 @@ async function updateRental(req, res) {
     return res.status(500).send(error.message);
   }
 }
+
 async function deleteRental(req, res) {
   const { id } = req.params;
 
