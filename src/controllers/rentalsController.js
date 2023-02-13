@@ -63,7 +63,7 @@ async function insertRental(req, res) {
       [customerId, gameId, daysRented, rentDate, originalPrice]
     );
 
-    return res.status(201);
+    return res.sendStatus(201);
   } catch (error) {
     return res.status(500).send(error.message);
   }
