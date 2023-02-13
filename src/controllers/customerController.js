@@ -46,6 +46,9 @@ async function getCustomers(_, res) {
 }
 
 async function getCustomersById(req, res) {
+    if (!req.params || typeof req.params !== "object") {
+      return res.status(400).send("Requisição inválida");
+    }
   const { id } = req.params;
   const data = new Date();
 
