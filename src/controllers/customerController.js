@@ -34,10 +34,11 @@ async function getCustomers(_, res) {
 
   try {
     const customers = await db.query("SELECT * FROM customers");
-    const formmattedCustomers = customers.rows.map((customer) => {
-      const birthday = formatDate(new Date(customer.birthday));
-      return { ...customer, birthday: birthday };
-    });
+      const formmattedCustomers = customers.rows.map((customer) => {
+        if (typeof customer !== "object") return customer;
+        const birthday = formatDate(new Date(customer.birthday));
+        return { ...customer, birthday: birthday };
+      });
 
     res.send(formmattedCustomers);
   } catch (err) {
@@ -46,11 +47,13 @@ async function getCustomers(_, res) {
 }
 
 async function getCustomersById(req, res) {
-    if (!req.params || typeof req.params !== "object") {
-      return res.status(400).send("Requisição inválida");
-    }
+    
   const { id } = req.params;
   const data = new Date();
+
+  if (!req.params || typeof req.params !== "object") {
+    return res.status(400).send("Requisição inválida");
+  }
 
   const zeroFill = (n) => {
     return n < 9 ? `0${n}` : `${n}`;
