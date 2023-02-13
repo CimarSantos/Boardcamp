@@ -69,12 +69,11 @@ async function getCustomersById(req, res) {
     if (!customers.rows.length)
       return res.status(404).send("Este usuário não existe.");
 
-    const formmattedCustomers = customers.rows.map((customer) => {
-      const birthday = formatDate(new Date(customer.birthday));
-      return { ...customer, birthday: birthday };
-    });
+    const customer = customers.rows[0];
+    const birthday = formatDate(new Date(customer.birthday));
+    const formmattedCustomer = { ...customer, birthday: birthday };
 
-    res.send(formmattedCustomers);
+    res.send(formmattedCustomer);
   } catch (err) {
     return res.status(500).send(err.message);
   }

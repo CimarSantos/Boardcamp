@@ -16,7 +16,7 @@ async function insertRental(req, res) {
     return `${y}-${mo}-${d}`;
   };
 
-  const rentDate = formatDate(data);
+  const rentedDate = formatDate(data);
 
   try {
     const getGamePrice = await db.query(
@@ -28,7 +28,7 @@ async function insertRental(req, res) {
 
     const rental = await db.query(
       `INSERT INTO rentals ("customerId", "gameId", "daysRented", "rentDate", "originalPrice") VALUES ($1, $2, $3, $4, $5)`,
-      [customerId, gameId, daysRented, rentDate, originalPrice]
+      [customerId, gameId, daysRented, rentedDate, originalPrice]
     );
 
     return res.sendStatus(201);
@@ -87,6 +87,18 @@ async function getRental(req, res) {
 }
 
 async function updateRental(req, res) {}
-async function deleteRental(req, res) {}
+async function deleteRental(req, res) {
+  const { id } = res.locals.rental;
+
+  try {
+    const deleteRental = await db.query("DELETE FROM rentals WHERE id = $1", [
+      id,
+    ]);
+
+    return res.sendStatus(200);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
 
 export { insertRental, getRental, updateRental, deleteRental };

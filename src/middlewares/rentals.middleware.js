@@ -42,7 +42,7 @@ async function validateRental(req, res, next) {
   );
 
   const gameStock = checkStock.rows[0].stockTotal;
-  console.log(gameStock);
+
   if (gameStock - rentedGames <= 0) {
     return res
       .status(400)
@@ -54,4 +54,27 @@ async function validateRental(req, res, next) {
   next();
 }
 
-export { validateRental };
+async function deleteRentalValidation(req, res, next) {
+  const { id } = req.params;
+
+  const ifRentalExists = await db.query(`SELECT * FROM rentals WHERE id = $1`, [
+    id,
+  ]);
+
+  const checkGameAvailability = await db.query(
+    `SELECT count(*) FROM rentals WHERE id = $1 AND "returnDate" IS NULL`,
+    [id]
+  );
+  console.log(checkGameAvailability);
+  if (!ifRentalExists.rows.length)
+    return res.status(404).send("Este aluguel não existe.");
+
+  /* if (ifRentalExists.returnDate === null) {
+    return res.status(400).send("Aluguel ainda não finalizado");
+  } */
+
+  res.locals.rental = { id };
+  next();
+}
+
+export { validateRental, deleteRentalValidation };
